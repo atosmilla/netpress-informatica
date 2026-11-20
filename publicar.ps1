@@ -1,3 +1,10 @@
-# Publica a pasta "site" na Netlify (netpress-informatica.netlify.app). Uso: .\publicar.ps1
+# Envia as mudanças para o GitHub. O GitHub Pages atualiza sozinho em 1 a 2 minutos:
+# https://atosmilla.github.io/netpress-informatica/
+# Uso: powershell -ExecutionPolicy Bypass -File publicar.ps1
 Set-Location $PSScriptRoot
-npx.cmd -y netlify-cli@27.16.0 deploy --dir site --prod --no-build --message "atualizacao"
+git add -A
+git diff --cached --quiet
+if ($LASTEXITCODE -ne 0) { git commit -m "atualizacao $(Get-Date -Format 'yyyy-MM-dd HH:mm')" | Out-Null }
+git push origin main
+if ($LASTEXITCODE -ne 0) { throw 'Falha ao enviar para o GitHub' }
+Write-Host 'PUBLICADO (1 a 2 minutos para atualizar): https://atosmilla.github.io/netpress-informatica/'
